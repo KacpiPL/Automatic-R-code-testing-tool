@@ -20,6 +20,8 @@ data1 <- read_sheet(sheet_url1)
 data2 <- read_sheet(sheet_url2)
 
 # function to create final DDL
+## DDL_date <- final deadline date, in the format "2023-04-06"
+## maxHoursDelayed <- the numeric number of hours a student may be late
 
 createFinalDDL <- function(DDL_date, maxHoursDelayed){
   
@@ -28,11 +30,33 @@ createFinalDDL <- function(DDL_date, maxHoursDelayed){
   if(maxHoursDelayed == 0){
     DDL_date <- DDL_date + 24*60*60 - 1
   } else{
-    DDL_date <- DDL_date + 24*60*60 + maxHoursDelayed * 60 * 60
+    DDL_date <- DDL_date + (24 + maxHoursDelayed) * 60 * 60
   }
   return(DDL_date)
 }
 
+ddl_date <- createFinalDDL("2023-04-06", 0.5)
+ddl_date
 
-ddl_date <- createFinalDDL("2023-04-06", 0)
+# function to filter answers
+## only the first answer can be checkd
+## answer must be sent before the final DDL - ddl_date
+
+## df <- df to be filtered
+## ddl_date <- final ddl_date
+
+filterAnswers <- function(df, ddl_date){
+  df <- df %>%
+    filter(df[[1]] <= ddl_date)
+  
+  df <- df %>%
+    group_by(df[[5]]) %>%
+    slice(which.min(df[[1]])) %>%
+    ungroup()
+    
+  return(df)
+}
+
+df_test <- filterAnswers(data1, ddl_date)
+df_test
 
