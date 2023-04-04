@@ -19,5 +19,20 @@ sheet_url2 <- "https://docs.google.com/spreadsheets/d/1pleNQoKcDmoXbsp8qr0DvqFsO
 data1 <- read_sheet(sheet_url1)
 data2 <- read_sheet(sheet_url2)
 
+# function to create final DDL
 
+createFinalDDL <- function(DDL_date, maxHoursDelayed){
+  
+  DDL_date <- as.POSIXct(DDL_date, tz = "UTC")
+  
+  if(maxHoursDelayed == 0){
+    DDL_date <- DDL_date + 24*60*60 - 1
+  } else{
+    DDL_date <- DDL_date + 24*60*60 + maxHoursDelayed * 60 * 60
+  }
+  return(DDL_date)
+}
+
+
+ddl_date <- createFinalDDL("2023-04-06", 0)
 
