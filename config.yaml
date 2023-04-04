@@ -1,0 +1,6 @@
+SheetsURLs:
+  sheetURL1: https://docs.google.com/spreadsheets/d/1QE03KZDkuKQxXUlxtvCtA95i69RqIJkWl7myFfGF_gw/edit?usp=sharing
+  sheetURL2: https://docs.google.com/spreadsheets/d/1pleNQoKcDmoXbsp8qr0DvqFsOrCLPlPMzlHkhn6AHF8/edit?usp=sharing
+Settings:
+  ddlDate: 2023-04-06
+  maxHoursDelayed: 3
