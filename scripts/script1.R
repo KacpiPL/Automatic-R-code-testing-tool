@@ -1,10 +1,12 @@
 # install.packages("googlesheets4")
 # install.packages("gargle")
 # install.packages("yaml")
+# install.packages("testthat")
 
 library(googlesheets4)
 library(dplyr)
 library(yaml)
+library(testthat)
 
 rm(list=ls())
 
@@ -54,4 +56,55 @@ filterAnswers <- function(df, ddlDate){
 
 ddlDate <- createFinalDDL(ddlDate, maxHoursDelayed)
 data1 <- filterAnswers(data1, ddlDate)
+
+
+##### Unit tests - test 4 #####
+
+# task 1
+## 
+createDataTest4Task1 <- function() {
+  v1 <- c(1:8)
+  v2 <- c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE)
+  v3 <- c("A", "B", "C", "D", "E", "F", "G", "H")
+  v4 <- c(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5)
+  v5 <- as.factor(c("X", "Y", "X", "Y", "X", "Y", "X", "Y"))
+  
+  mySet1 <- data.frame(v1, v2, v3, v4, v5)
+  return(mySet1)
+}
+
+## 1a
+codeTest4Task1a <- function(df){
+  print(mySet1[5,])
+}
+
+test_that("Test4Task1a", {
+  mySet1 <- createDataTest4Task1()
+  
+  result <- print(mySet1[5,])
+  expected_result <- codeTest4Task1a()
+  
+  expect_equal(result, expected_result)
+})
+
+## 1b
+codeTest4Task1b <- function(df){
+  colnames(df)[2] <- "column02"
+  return(df)
+}
+
+runStudentCodeTest4Task1b <- function(mySet1, row, column){
+  eval(parse(text=data1[[row, column]]))
+  return(mySet1)
+}
+
+test_that("Test4Task1b", {
+  mySet1 <- createDataTest4Task1()
+  mySet2 <- createDataTest4Task1()
+  
+  result <- runStudentCode(mySet1, 1, 10)
+  expected_result <- codeTest4Task1b(mySet1)
+  
+  expect_equal(result, expected_result)
+})
 
