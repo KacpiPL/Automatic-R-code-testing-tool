@@ -83,10 +83,11 @@ runStudentCodeTest4Task1a(mySet1, row, column) {
 }
 
 test_that("Test4Task1a", {
-  mySet1 <- createDataTest4Task1()
+  mySetStudent <- createDataTest4Task1()
+  mySetExpected <- createDataTest4Task1()
   
-  result <- runStudentCodeTest4Task1a(mySet1, 1, 9)
-  expected_result <- codeTest4Task1a()
+  result <- runStudentCodeTest4Task1a(mySetStudent, 1, 9)
+  expected_result <- codeTest4Task1a(mySetExpected)
   
   expect_equal(result, expected_result)
 })
@@ -103,11 +104,10 @@ runStudentCodeTest4Task1b <- function(mySet1, row, column){
 }
 
 test_that("Test4Task1b", {
-  mySetStudent<- createDataTest4Task1()
-  mySetExpected <- createDataTest4Task1()
+  mySet1 <- createDataTest4Task1()
   
-  result <- runStudentCode(mySetStudent, 1, 10)
-  expected_result <- codeTest4Task1b(mySetExpected)
+  result <- runStudentCode(mySet1, 1, 10)
+  expected_result <- codeTest4Task1b(mySet1)
   
   expect_equal(result, expected_result)
 })
