@@ -96,21 +96,22 @@ createDataTest4Task1 <- function() {
 
 ## 1a
 codeTest4Task1a <- function(df){
-  return(capture.output(print(mySet1[5,])))
+  return(capture.output(print(df[5,])))
 }
 
 runStudentCodeTest4Task1a <- function(mySet1, row, column) {
   return(capture.output(eval(parse(text=data1[[row, column]]))))
 }
 
-test_that("Test4Task1a", {
-  mySet1 <- createDataTest4Task1()
+test4Task1a <- function(df, row, column) {
   
-  studentResult <- runStudentCodeTest4Task1a(mySet1, 1, 9)
-  expectedResult <- codeTest4Task1a(mySet1)
+  studentResult <- runStudentCodeTest4Task1a(df, row, column)
+  expectedResult <- codeTest4Task1a(df)
   
-  expect_equal(studentResult, expectedResult)
-})
+  return(expectEqualQuiet(studentResult, expectedResult))
+}
+
+test4Task1a(createDataTest4Task1(), 1, 9)
 
 ## 1b
 codeTest4Task1b <- function(df){
