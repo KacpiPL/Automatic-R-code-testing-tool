@@ -60,6 +60,27 @@ data1 <- filterAnswers(data1, ddlDate)
 
 ##### Unit tests - test 4 #####
 
+# function to return TRUE/FALSE basing on test
+
+## function uses expect_equal but does not print result
+## it returns TRUE/FALSE
+
+## studentResult <- student result
+## expectedResult
+
+expectEqualQuiet <- function(studentResult, expectedResult) {
+  output <- tryCatch(
+    expr = {
+      expect_equal(studentResult, expectedResult)
+      TRUE
+    },
+    error = function(e) {
+      FALSE
+    }
+  )
+  return(output)
+}
+
 # task 1
 ## 
 createDataTest4Task1 <- function() {
@@ -102,7 +123,7 @@ runStudentCodeTest4Task1b <- function(mySet1, row, column){
   return(mySet1)
 }
 
-test_that("Test4Task1b", {
+test4_1b <- test_that("Test4Task1b", {
   mySet1 <- createDataTest4Task1()
   
   result <- runStudentCode(mySet1, 1, 10)
