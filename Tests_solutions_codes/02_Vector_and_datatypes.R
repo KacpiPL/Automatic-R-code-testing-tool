@@ -4,7 +4,7 @@
 
 # 1. Create a numerical value with decimal part. Convert it to integer and then
 # to character. See what are the changes (in values and printing). 
-
+asds <- 123
 # 2. Create two variables with text. Check the documentation of paste() and try
 # to use it on created vectors. Compare the results of paste() function and c(). 
 # What are the differences? Why?
@@ -61,5 +61,5 @@ print(vec4[c(5,10,26)])
 
 # 11. Print values of every second element from the previously created vector, 
 # starting from the 5th element of the vector. TIP: seq().
-vec4
-print(vec4[seq(from=5,to=length(vec4),by=2)])
+#vec4
+#print(vec4[seq(from=5,to=length(vec4),by=2)]);
