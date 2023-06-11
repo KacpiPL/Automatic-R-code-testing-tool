@@ -1,6 +1,7 @@
 SheetsURLs:
+  sheetURL2: https://docs.google.com/spreadsheets/d/1pleNQoKcDmoXbsp8qr0DvqFsOrCLPlPMzlHkhn6AHF8/edit?usp=sharing
+  sheetURL3: https://docs.google.com/spreadsheets/d/1pleNQoKcDmoXbsp8qr0DvqFsOrCLPlPMzlHkhn6AHF8/edit?usp=sharing
   sheetURL4: https://docs.google.com/spreadsheets/d/1QE03KZDkuKQxXUlxtvCtA95i69RqIJkWl7myFfGF_gw/edit?usp=sharing
-  sheetURL1: https://docs.google.com/spreadsheets/d/1pleNQoKcDmoXbsp8qr0DvqFsOrCLPlPMzlHkhn6AHF8/edit?usp=sharing
 Settings:
   ddlDate: 2023-04-06
   maxHoursDelayed: 3
@@ -18,9 +19,16 @@ Lectures:
     Task8: vec4=runif(n=50,min=0,max=20)
     Task9: print(vec4[c(5,10,26)])
   Lecture3:
+    Code: 'table=matrix(data=0,nrow=5,ncol=2);var_1=c("hello","world","what","a","nice","day");var_2=seq(from=1,to=6,by=1);var_3=matrix(data=3,nrow=3,ncol=3);var_4=5;'
     ddlDate: 2023-04-25
-    Task1: Essay
-    Task2: Damn
+    Task1: ??
+    Task2: ??
+    Task3: table[,1]=3
+    Task4: table[3,2]=20
+    Task5: print(table[,2]);class(table[,2]) 
+    Task6: ??
+    Task7: print(myList[[length(myList)]][4])
+    Task8: myList[[length(myList)]][5]=NA
   Lecture4:
     Code: 'set.seed(1);vector1 = c(1:8);vector2 = c("Kacper", "Karol", "Pawel", "Andrzej", "Mikolaj", "Wiktor", "Jedrzej", "Jan");vector3 = c(170, 175, 178, 180, 190, 174, 181, 173);vector4 = c(30, 35, 33, 41, 29, 36, 38, 34);vector5 = c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8");mySet1 = data.frame(vector1, vector2, vector3, vector4, vector5)'
     ddlDate: 2023-05-01
@@ -31,7 +39,7 @@ Lectures:
     Task5: head(mySet1,7)
     Task6: print(mySet1[1:7,])
     Task7: print(iris[seq(from=40,to=120,by=3),])
-    Task8: head(women)
+    Task8: women[,1]=as.character(women[,1])
     Task9: women$shoe_size=round(runif(nrow(women),min=35,max=42),digits=0)
     
 
