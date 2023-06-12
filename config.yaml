@@ -3,7 +3,6 @@ SheetsURLs:
   sheetURL3: https://docs.google.com/spreadsheets/d/1pleNQoKcDmoXbsp8qr0DvqFsOrCLPlPMzlHkhn6AHF8/edit?usp=sharing
   sheetURL4: https://docs.google.com/spreadsheets/d/1QE03KZDkuKQxXUlxtvCtA95i69RqIJkWl7myFfGF_gw/edit?usp=sharing
 Settings:
-  ddlDate: 2023-04-06
   maxHoursDelayed: 3
   ResultsURL: https://docs.google.com/spreadsheets/d/1AbxM7FMP86wThoH-RrLGMD-7z6jpPUx9IwVEpYnbZCQ/edit?usp=sharing
 Lectures:

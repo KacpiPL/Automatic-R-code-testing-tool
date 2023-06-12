@@ -13,30 +13,60 @@ rm(list=ls())
 # Load values from config
 config <- yaml.load_file("config.yaml")
 
-data <- read_sheet(config$SheetsURLs$sheetURL4)
-ddlDate <- config$Settings$ddlDate
-maxHoursDelayed <- config$Settings$maxHoursDelayed
-
-
-# function to create final DDL
+# create_final_ddl
+## function to create final DDL
+# Input:
 ## ddlDate <- final deadline date, in the format "2023-04-06"
 ## maxHoursDelayed <- the numeric number of hours a student may be late
+# Output:
+## Final, impassable ddl
+
+create_final_ddl <- function(ddlDate, maxHoursDelayed){
+  ddlDate <- as.POSIXct(ddlDate, tz = "UTC")
+  if(maxHoursDelayed == 0){
+    ddlDate <- ddlDate + 24*60*60 - 1
+  } else{
+    ddlDate <- ddlDate + (24 + maxHoursDelayed) * 60 * 60
+  }
+  return(ddlDate)
+}
+
+# filter_answers
+# function to filter answers
+## only the first answer can be checkd
+## answer must be sent before the final DDL - ddlDate
+# Input:
+## df <- dataframe to be filtered
+## ddlDate <- final deadline 
+# Output:
+## Filtered dafatrame
+  
+filter_answers <- function(df, ddlDate){
+  df <- df %>%
+    filter(df[[1]] <= ddlDate)
+  
+  df <- df %>%
+    group_by(df[[5]]) %>%
+    slice(which.min(df[[1]])) %>%
+    ungroup()
+  return(df)
+}
 
 compare_answers <- function(config, Testnr) {
-  
   # Get the relevant URLs and lecture based on Testnr
   sheetURL <- config$SheetsURLs[[paste0("sheetURL", Testnr)]]
   lecture <- config$Lectures[[paste0("Lecture", Testnr)]]
+  ddlDate <- lecture$ddlDate
+  maxHoursDelayed <- config$Settings$maxHoursDelayed
   
   # Read the Google Sheet
   data <- read_sheet(sheetURL)
-  data$'Sygnatura czasowa' <- as.POSIXct(data$'Sygnatura czasowa')
   
-  data <- data[order(data$'Sygnatura czasowa'), ]
-  data <- data[!duplicated(data$`Student ID`), ]
+  # create final dll
+  ddlDate <- create_final_ddl(ddlDate, maxHoursDelayed)
   
-  ddlDate <- as.Date(lecture$ddlDate)
-  data <- data[as.Date(data$'Sygnatura czasowa') <= ddlDate, ]
+  # filter dataframe
+  data <- filter_answers(data, ddlDate)
   
   # Get the relevant answers from config.yaml
   tasks <- lecture[names(lecture) != c("Code", "ddlDate")]
@@ -176,7 +206,7 @@ compare_answers <- function(config, Testnr) {
 }
 
 
-Table3 <- compare_answers(config, 4)
+test_4_results_df <- compare_answers(config, 4)
 
 
 
