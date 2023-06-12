@@ -1,8 +1,8 @@
 # take_max_points
 ## function to count max possible number of points to get in test
-# input:
+# Input:
 ## df with points per every task and execution time
-# output:
+# Output:
 ## max_points to achieve in one test
 # assumptions:
 ## 1 task = 1 point
@@ -73,7 +73,7 @@ find_test_column_index <- function(test_number, df){
 }
 
 # update_test_results
-# function to update results from othe chosen test
+# function to update results from the chosen test
 # Input:
 ## test_result_df - df with specific test results (e.g. from number 4)
 ## all_results_df - google sheet with current status of results
@@ -81,7 +81,8 @@ find_test_column_index <- function(test_number, df){
 ## test_column_index - index of the column in all_results to the appropriate test
 # Output:
 ## updated google sheet (all result) with the chosen test
-update_test_results <- function(test_result_df, all_results_df, all_results_gs, column_index){
+
+update_test_results <- function(test_result_df, all_results_df, all_results_gs, test_column_index){
   # take the result and id of student in test_results_df
   for (row in 1:nrow(test_results_df)) {
     # take id and result from test_results_df
@@ -137,10 +138,11 @@ update_test_results <- function(test_result_df, all_results_df, all_results_gs, 
   }
 }
 
-test_results_df <- Table3
+# run the whole code:
 all_results_df <- read_sheet(config$Settings$ResultsURL)
 all_results_gs <- gs4_get(config$Settings$ResultsURL)
 column_index <- find_test_column_index(4, all_results_df)
 
+test_results_df <- add_sum(Table3)
 update_test_results(test_results_df, all_results_df, all_results_gs, column_index)
 
