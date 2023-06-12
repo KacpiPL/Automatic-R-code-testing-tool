@@ -4,6 +4,7 @@ SheetsURLs:
   sheetURL4: https://docs.google.com/spreadsheets/d/1QE03KZDkuKQxXUlxtvCtA95i69RqIJkWl7myFfGF_gw/edit?usp=sharing
 Settings:
   maxHoursDelayed: 3
+  Students_only: TRUE
   ResultsURL: https://docs.google.com/spreadsheets/d/1AbxM7FMP86wThoH-RrLGMD-7z6jpPUx9IwVEpYnbZCQ/edit?usp=sharing
 Lectures:
   Lecture2:

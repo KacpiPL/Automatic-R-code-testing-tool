@@ -13,8 +13,10 @@ rm(list=ls())
 # Load values from config
 config <- yaml.load_file("config.yaml")
 
+
 # create_final_ddl
 ## function to create final DDL
+
 # Input:
 ## ddlDate <- final deadline date, in the format "2023-04-06"
 ## maxHoursDelayed <- the numeric number of hours a student may be late
@@ -52,6 +54,21 @@ filter_answers <- function(df, ddlDate){
   return(df)
 }
 
+
+#### Function to filter answers by getting only students' data
+filter_data_by_email <- function(data, config) {
+  if (config$Settings$Students_only) {
+    data <- subset(data, grepl("@student\\.uw\\.edu\\.pl$", `Adres e-mail...4`))
+  } else {
+    data <- data
+  }
+  return(data)
+}
+
+
+
+config$Settings$Students_only
+
 compare_answers <- function(config, Testnr) {
   # Get the relevant URLs and lecture based on Testnr
   sheetURL <- config$SheetsURLs[[paste0("sheetURL", Testnr)]]
@@ -61,7 +78,7 @@ compare_answers <- function(config, Testnr) {
   
   # Read the Google Sheet
   data <- read_sheet(sheetURL)
-  
+  data <- filter_data_by_email(data, config)
   # create final dll
   ddlDate <- create_final_ddl(ddlDate, maxHoursDelayed)
   
