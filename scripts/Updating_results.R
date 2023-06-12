@@ -33,7 +33,7 @@ take_max_points <- function(df){
 add_sum <- function(df){
   max_points <- take_max_points(df)
   last_col <- 2 + max_points
-  df$sum <- rowSums(Table3[, c(3:last_col)])
+  df$sum <- rowSums(df[, c(3:last_col)])
   df$percentage <- round((df$sum / max_points) * 100, 0)
   df <- subset(df, select = -c(sum))
   return(df)
@@ -82,7 +82,7 @@ find_test_column_index <- function(test_number, df){
 # Output:
 ## updated google sheet (all result) with the chosen test
 
-update_test_results <- function(test_result_df, all_results_df, all_results_gs, test_column_index){
+update_test_results <- function(test_results_df, all_results_df, all_results_gs, test_column_index){
   # take the result and id of student in test_results_df
   for (row in 1:nrow(test_results_df)) {
     # take id and result from test_results_df
@@ -138,11 +138,12 @@ update_test_results <- function(test_result_df, all_results_df, all_results_gs, 
   }
 }
 
+
 # run the whole code:
 all_results_df <- read_sheet(config$Settings$ResultsURL)
 all_results_gs <- gs4_get(config$Settings$ResultsURL)
 column_index <- find_test_column_index(4, all_results_df)
 
-test_results_df <- add_sum(Table3)
-update_test_results(test_results_df, all_results_df, all_results_gs, column_index)
+test_4_results_df <- add_sum(test_4_results_df)
+update_test_results(test_4_results_df, all_results_df, all_results_gs, column_index)
 
