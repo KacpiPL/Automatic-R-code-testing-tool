@@ -27,7 +27,8 @@ take_max_points <- function(df){
 # Output:
 ## df with column with calculated percentage points per student
 
-add_sum <- function(df, max_points){
+add_sum <- function(df){
+  max_points <- take_max_points(df)
   last_col <- 2 + max_points
   df$sum <- rowSums(Table3[, c(3:last_col)])
   df$percentage <- round((df$sum / max_points) * 100, 0)
@@ -35,6 +36,7 @@ add_sum <- function(df, max_points){
   return(df)
 }
 
+Table3 <- add_sum(Table3)
 
 
 
