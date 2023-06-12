@@ -1,11 +1,9 @@
-# take_max_points function
-
+# take_max_points
+## function to count max possible number of points to get in test
 # input:
 ## df with points per every task and execution time
-
 # output:
 ## max_points to achieve in one test
-
 # assumptions:
 ## 1 task = 1 point
 ## first task in column number 3
@@ -25,11 +23,10 @@ take_max_points <- function(df){
   return(max_points)
 }
 
-# add_sum function
-
+# add_sum
+## function to add % result of test
 # Input:
 ## df with points per every task and execution time
-
 # Output:
 ## df with column with calculated percentage points per student
 
@@ -42,14 +39,16 @@ add_sum <- function(df){
   return(df)
 }
 
-# define_range function
-# Input: None
-
+# define_range
+## function to define range using numbers, not e.g. "A1"...
+# Input: 
+## start_row, start_col - numbers of start columns
+## end_row, end_col - numbers of start rows
 # Output:
 ## cell_limits object with range
-
-# Define the range using numeric column and row indexes
+# Note:
 # if we do not define the last row/column in range it is ok
+# it is better to define both (function sometimes does not work properly with just aratr parameters)
 # but if we do not define both row and column in range it is not ok
 
 define_range <- function(start_row, start_col, end_row, end_col){
@@ -57,14 +56,15 @@ define_range <- function(start_row, start_col, end_row, end_col){
   return(range)
 }
 
-# find_column_index function
-# of the test in all_results_df
-
+# find_column_index 
+## function to find column index of the chosen test in all_results_df
 # Input:
 # test number - number of the test
 # df - dataframe with all results
+# Output:
+## test_column_index - index of column of chosen test
 
-find_column_index <- function(test_number, df){
+find_test_column_index <- function(test_number, df){
   test_number <- as.character(test_number)
   list <- colnames(df)
   index <- sapply(list, function(x) grepl(test_number, x))
@@ -72,43 +72,75 @@ find_column_index <- function(test_number, df){
   return(test_column_index)
 }
 
-# write the data to the specific range
-range_write(
-  results_gs,
-  data = data,
-  sheet = NULL,
-  range = range,
-  col_names = FALSE,
-  reformat = TRUE
-)
-
+# update_test_results
+# function to update results from othe chosen test
+# Input:
+## test_result_df - df with specific test results (e.g. from number 4)
+## all_results_df - google sheet with current status of results
+## all_results_gs - gs4_get object to the google sheet with results
+## test_column_index - index of the column in all_results to the appropriate test
+# Output:
+## updated google sheet (all result) with the chosen test
+update_test_results <- function(test_result_df, all_results_df, all_results_gs, column_index){
+  # take the result and id of student in test_results_df
+  for (row in 1:nrow(test_results_df)) {
+    # take id and result from test_results_df
+    student_id <- test_results_df[row,2]
+    student_result <- test_results_df[row, ncol(test_results_df)]
+    
+    # find student row index in all_results_df
+    # +1 because we do not count colnames here
+    student_row_index <- which(all_results_df$'Student ID' == student_id) + 1
+    
+    # num of rows in all_results_df
+    # +1 because we do not count colnames here
+    last_row_index <- nrow(all_results_df) + 1
+    
+    # check if the student is in the column
+    if(length(student_row_index) > 0) {
+      # if yes append the result to the appropriate cell
+      range <- define_range(student_row_index, column_index, student_row_index, column_index)
+      range_write(
+        all_results_gs,
+        data = as.data.frame(student_result),
+        sheet = NULL,
+        range = range,
+        col_names = FALSE,
+        reformat = TRUE
+      )
+    } else {
+      # if not add his/her id to the first column, add the result
+      # refresh all_results_df
+      # add ID
+      range <- define_range(last_row_index+1, 1, last_row_index+1, 1)
+      range_write(
+        all_results_gs,
+        data = as.data.frame(student_id),
+        sheet = NULL,
+        range = range,
+        col_names = FALSE,
+        reformat = TRUE
+      )
+      # add result
+      range <- define_range(last_row_index+1, column_index, last_row_index+1, column_index)
+      range_write(
+        all_results_gs,
+        data = as.data.frame(student_result),
+        sheet = NULL,
+        range = range,
+        col_names = FALSE,
+        reformat = TRUE
+      )
+      # refresh all_results_df
+      all_results_df <- read_sheet(config$Settings$ResultsURL)
+    }
+  }
+}
 
 test_results_df <- Table3
 all_results_df <- read_sheet(config$Settings$ResultsURL)
 all_results_gs <- gs4_get(config$Settings$ResultsURL)
+column_index <- find_test_column_index(4, all_results_df)
 
-range <- define_range(5, 2, 5, NA)
+update_test_results(test_results_df, all_results_df, all_results_gs, column_index)
 
-
-column_index <- find_column_index(4, all_results_df)
-
-
-# take the result and id of student in test_results_df
-for (row in 1:nrow(test_results_df)) {
-  student_id <- test_results_df[row,2]
-  student_result <- test_results_df[1, ncol(test_results_df)]
-  
-  # find student row index in all_results_df
-  student_row_index <- which(all_results_df$'Student ID' == student_id)
-  
-  # check if the student is in the column
-  if(length(student_row_index) > 0) {
-    print(paste("Value is in the column at index:", student_row_index))
-  } else {
-    print("Value is not in the column.")
-  }
-  
-}
-
-
-colnames(all_results_df)
