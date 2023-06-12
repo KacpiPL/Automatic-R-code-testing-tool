@@ -16,7 +16,6 @@ config <- yaml.load_file("config.yaml")
 
 # create_final_ddl
 ## function to create final DDL
-
 # Input:
 ## ddlDate <- final deadline date, in the format "2023-04-06"
 ## maxHoursDelayed <- the numeric number of hours a student may be late
@@ -54,10 +53,16 @@ filter_answers <- function(df, ddlDate){
   return(df)
 }
 
+# filter_data_by_email
+## function to filter answers by getting only students' data
+# Input:
+## data - dataframe to be filteres
+## students only <- True/False value from config
+# Output:
+## filtered dataframe
 
-#### Function to filter answers by getting only students' data
-filter_data_by_email <- function(data, config) {
-  if (config$Settings$Students_only) {
+filter_data_by_email <- function(data, students_only) {
+  if (students_only) {
     data <- subset(data, grepl("@student\\.uw\\.edu\\.pl$", `Adres e-mail...4`))
   } else {
     data <- data
@@ -66,24 +71,22 @@ filter_data_by_email <- function(data, config) {
 }
 
 
-
-config$Settings$Students_only
-
 compare_answers <- function(config, Testnr) {
   # Get the relevant URLs and lecture based on Testnr
   sheetURL <- config$SheetsURLs[[paste0("sheetURL", Testnr)]]
   lecture <- config$Lectures[[paste0("Lecture", Testnr)]]
   ddlDate <- lecture$ddlDate
   maxHoursDelayed <- config$Settings$maxHoursDelayed
+  students_only <- config$Settings$Students_only
   
   # Read the Google Sheet
   data <- read_sheet(sheetURL)
-  data <- filter_data_by_email(data, config)
   # create final dll
   ddlDate <- create_final_ddl(ddlDate, maxHoursDelayed)
   
   # filter dataframe
   data <- filter_answers(data, ddlDate)
+  data <- filter_data_by_email(data, students_only)
   
   # Get the relevant answers from config.yaml
   tasks <- lecture[names(lecture) != c("Code", "ddlDate")]
