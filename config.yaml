@@ -6,6 +6,9 @@ Settings:
   maxHoursDelayed: 3
   Students_only: TRUE
   ResultsURL: https://docs.google.com/spreadsheets/d/1AbxM7FMP86wThoH-RrLGMD-7z6jpPUx9IwVEpYnbZCQ/edit?usp=sharing
+  Seed: 1
+  Starting_Task_Col: 7
+  Get_E-mail: TRUE
 Lectures:
   Lecture2:
     Code: 'vecDate <- c("09:12:12", "28:02:16", "31:05:22");'
@@ -31,9 +34,9 @@ Lectures:
     Task7: print(myList[[length(myList)]][4])
     Task8: myList[[length(myList)]][5]=NA
   Lecture4:
-    Code: 'set.seed(1);vector1 = c(1:8);vector2 = c("Kacper", "Karol", "Pawel", "Andrzej", "Mikolaj", "Wiktor", "Jedrzej", "Jan");vector3 = c(170, 175, 178, 180, 190, 174, 181, 173);vector4 = c(30, 35, 33, 41, 29, 36, 38, 34);vector5 = c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8");mySet1 = data.frame(vector1, vector2, vector3, vector4, vector5)'
+    Code: 'vector1 = c(1:8);vector2 = c("Kacper", "Karol", "Pawel", "Andrzej", "Mikolaj", "Wiktor", "Jedrzej", "Jan");vector3 = c(170, 175, 178, 180, 190, 174, 181, 173);vector4 = c(30, 35, 33, 41, 29, 36, 38, 34);vector5 = c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8");mySet1 = data.frame(vector1, vector2, vector3, vector4, vector5)'
     ddlDate: 2023-05-01
-    Task1: 'Passing vectors of the same length to the data.frame() function or by conversion from matix with as.data.frame().'
+    Task1: Passing vectors of the same length to the data.frame() function or by conversion from matix with as.data.frame().
     Task2: 'summary()'
     Task3: print(mySet1[5,])
     Task4: colnames(mySet1)[2]="column02"

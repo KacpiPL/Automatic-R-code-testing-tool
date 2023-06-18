@@ -8,7 +8,7 @@ library(dplyr)
 library(yaml)
 library(testthat)
 
-rm(list=ls())
+#rm(list=ls())
 
 # Load values from config
 config <- yaml.load_file("config.yaml")
@@ -47,7 +47,7 @@ filter_answers <- function(df, ddlDate){
     filter(df[[1]] <= ddlDate)
   
   df <- df %>%
-    group_by(df$'Student ID') %>%
+    group_by(df[[5]]) %>%
     slice(which.min(df[[1]])) %>%
     ungroup()
   return(df)
@@ -63,7 +63,7 @@ filter_answers <- function(df, ddlDate){
 
 filter_data_by_email <- function(data, students_only) {
   if (students_only) {
-    data <- subset(data, grepl("@student\\.uw\\.edu\\.pl$", `Adres e-mail`))
+    data <- subset(data, grepl("@student\\.uw\\.edu\\.pl$", `Adres e-mail...4`))
   } else {
     data <- data
   }
@@ -74,14 +74,13 @@ filter_data_by_email <- function(data, students_only) {
 compare_answers <- function(config, Testnr) {
   
   # Getting relevant features from config file using Testnr
+  
   sheetURL <- config$SheetsURLs[[paste0("sheetURL", Testnr)]]
   lecture <- config$Lectures[[paste0("Lecture", Testnr)]]
   ddlDate <- lecture$ddlDate
   maxHoursDelayed <- config$Settings$maxHoursDelayed
   students_only <- config$Settings$Students_only
-  seed_value <- config$Settings$Seed
-  task_col <- config$Settings$Starting_Task_Col
-  set.seed(seed_value)
+  
   # Read the Google Sheet
   data <- read_sheet(sheetURL)
   
@@ -122,7 +121,7 @@ compare_answers <- function(config, Testnr) {
   for (i in 1:nrow(data)) {
     
     # Get the answers for specific student
-    applicant_answers <- data[i, task_col:ncol(data)]
+    applicant_answers <- data[i, 7:ncol(data)]
     
     # Clean the student's answers for columns other than Task1 and Task2
     applicant_answers[, -c(1, 2)] <- lapply(
@@ -133,15 +132,7 @@ compare_answers <- function(config, Testnr) {
     task_scores <- rep(0, length(task_ids))
     start_time <- Sys.time()
     
-    for (j in 1:length(task_ids)) {
-      if (isTRUE(identical( str_trim(task_answers[j]),str_trim(applicant_answers[j])))) {
-        task_scores[j] <- 1
-      }
-    }
-    
-    
-  
-    
+
     for (j in 1:length(task_ids)) {
       if (j >= 1 && task_scores[j] == 0) {
         expected_answer <- tryCatch({
@@ -151,39 +142,40 @@ compare_answers <- function(config, Testnr) {
           print(e)
         })
         
-        if (isTRUE(identical(applicant_answers[j], expected_answer))) {
-          # If the applicant's answer is identical to the expected answer
+        applicant_answer <- tryCatch({
+          eval(parse(text = applicant_answers[j]))
+        }, error = function(e) {
+          cat("Error occurred while evaluating student answer for", task_ids[j], ":\n")
+          print(e)
+        })
+        
+        comparison_result <- tryCatch({
+          is_equal <- identical(applicant_answer, expected_answer)
+          if (is.na(is_equal)) {
+            is_equal <- !is.na(applicant_answer) && !is.na(expected_answer) && applicant_answer == expected_answer
+          }
+          is_equal
+        }, error = function(e) {
+          cat("Error occurred while comparing student answer for", task_ids[j], ":\n")
+          print(e)
+        })
+        
+        if (!inherits(expected_answer, "error") && !inherits(applicant_answer, "error") && !inherits(comparison_result, "error") && comparison_result) {
           task_scores[j] <- 1
         } else {
-          # Proceed with evaluating the applicant's answer
-          applicant_answer <- tryCatch({
-            set.seed(seed_value)
-            eval(parse(text = applicant_answers[j]))
-          }, error = function(e) {
-            cat("Error occurred while evaluating student answer for", task_ids[j], ":\n")
-            print(e)
-          })
-          
-          if (!inherits(expected_answer, "error") && !inherits(applicant_answer, "error") &&
-              (isTRUE(identical(applicant_answer, expected_answer)) ||
-               (!is.na(applicant_answers[j]) && !is.na(task_answers[j]) && applicant_answers[j] == task_answers[j]))) {
-            task_scores[j] <- 1
-          } else {
-            # Perform the test using test_that and catch the error if it fails
-            tryCatch({
-              test_that(paste("Student", data$`Student ID`[i], "-", task_ids[j]), {
-                expect_equal(applicant_answer, expected_answer)
-              })
-              task_scores[j] <- 1
-            }, error = function(e) {
-              task_scores[j] <- 0
-              cat("Test failed for Student", data$`Student ID`[i], "-", task_ids[j], "\n")
+          # Perform the test using test_that and catch the error if it fails
+          tryCatch({
+            test_that(paste("Student", data$`Student ID`[i], "-", task_ids[j]), {
+              expect_equal(applicant_answer, expected_answer)
             })
-          }
+            task_scores[j] <- 1
+          }, error = function(e) {
+            task_scores[j] <- 0
+            cat("Test failed for Student", data$`Student ID`[i], "-", task_ids[j], "\n")
+          })
         }
       }
     }
-    
     
     # Calculate the total score for the applicant
     applicant_score <- sum(task_scores)
@@ -211,7 +203,7 @@ compare_answers <- function(config, Testnr) {
 }
 
 
-Table3 <- compare_answers(config, 2)
+Table3 <- compare_answers(config, 4)
 
 
 
