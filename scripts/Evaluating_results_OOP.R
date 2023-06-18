@@ -4,6 +4,7 @@ Test <- R6Class("Test",
                   seed_value = NULL,
                   task_col = NULL,
                   task_ids = NULL,
+                  total_score = NULL,
                   
                   .create_final_ddl = function(ddlDate, maxHoursDelayed){
                     ddlDate <- as.POSIXct(ddlDate, tz = "UTC")
@@ -62,6 +63,7 @@ Test <- R6Class("Test",
                     self$ddlDate <- self$lecture$ddlDate
                     self$tasks <- self$lecture[names(self$lecture) != c("Code", "ddlDate")]
                     self$task_answers <- unlist(self$tasks)
+                    private$total_score <- 0
                     
                     self$results <- data.frame(
                       Name = character(nrow(self$data)),
@@ -85,9 +87,6 @@ Test <- R6Class("Test",
                       cat("Error occurred while executing the code from Lecture", self$testnr, "$Code:\n")
                       print(e)
                     })
-                    
-                    # Initialize a score counter
-                    total_score <- 0
                     
                     # Set results as zero to be changed
                     self$results[, private$task_ids] <- 0
@@ -114,6 +113,8 @@ Test <- R6Class("Test",
                       }
                       
                       
+                      
+                      
                       for (j in 1:length(private$task_ids)) {
                         if (j >= 1 && task_scores[j] == 0) {
                           expected_answer <- tryCatch({
@@ -129,7 +130,7 @@ Test <- R6Class("Test",
                           } else {
                             # Proceed with evaluating the applicant's answer
                             applicant_answer <- tryCatch({
-                              set.seed(private$seed_value)
+                              set.seed(seed_value)
                               eval(parse(text = applicant_answers[j]))
                             }, error = function(e) {
                               cat("Error occurred while evaluating student answer for", private$task_ids[j], ":\n")
@@ -156,6 +157,7 @@ Test <- R6Class("Test",
                         }
                       }
                       
+                      
                       # Calculate the total score for the applicant
                       applicant_score <- sum(task_scores)
                       
@@ -163,7 +165,7 @@ Test <- R6Class("Test",
                       cat("Student no. ", self$data$`Student ID`[i], "score:", applicant_score, "\n")
                       
                       # Update the total score
-                      total_score <- total_score + applicant_score
+                      private$total_score <- private$total_score + applicant_score
                       end_time <- Sys.time()
                       execution_time <- end_time - start_time
                       # Update the results dataframe with Name and Student ID
@@ -175,14 +177,18 @@ Test <- R6Class("Test",
                     }
                     
                     # Print the total score
-                    cat("Total score:", total_score, "\n")
+                    cat("Total score:", private$total_score, "\n")
+                    
+                    # Return the results dataframe
+                    #return(results)
                   }
                 ))
 
 one <- Test$new(config, 4)
 one$score_test()
-one$results
+df <- one$results
+one$show_tasks_ids()
 
 
-df <- one$data
+df1 <- one$data
 
