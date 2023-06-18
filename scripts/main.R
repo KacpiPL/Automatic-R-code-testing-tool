@@ -18,6 +18,9 @@ source("scripts/Shiny.R")
 # to the proof of concept solution - that is the reason why part of the code is written functionally and part
 # using OOP...
 
+# We encourage you to visit github, where you can find the documentation to the code:
+# https://github.com/KacpiPL/Automatic-R-code-testing-tool
+
 # Load values from config
 config <- yaml.load_file("config.yaml")
 
