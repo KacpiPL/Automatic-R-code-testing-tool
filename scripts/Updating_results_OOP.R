@@ -7,25 +7,9 @@ ResultsManager <- R6Class("ResultsManager",
                             all_results_df = NULL,       # private
                             all_results_gs = NULL,       # private
                             column_index = NULL,         # private
-                            config = NULL                # private
-                          ),
-                          
-                          public = list(
-                            test_number = NULL,
-                            test_results_df = NULL,     # public
+                            config = NULL,               # private
                             
-                            initialize = function(config, test_results_df, test_number) {
-                              
-                              self$test_results_df <- self$add_sum(test_results_df)
-                              self$test_number <- test_number
-                              
-                              private$config <- config
-                              private$all_results_df <- googlesheets4::read_sheet(private$config$Settings$ResultsURL)
-                              private$all_results_gs <- googlesheets4::gs4_get(private$config$Settings$ResultsURL)
-                              private$column_index <- self$find_test_column_index(self$test_number, private$all_results_df)
-                            },
-                            
-                            take_max_points = function(df){
+                            .take_max_points = function(df){
                               df_cols <- colnames(df)
                               max_points <- 0
                               for (i in df_cols){
@@ -40,8 +24,8 @@ ResultsManager <- R6Class("ResultsManager",
                               return(max_points)
                             },
                             
-                            add_sum = function(df){
-                              max_points <- self$take_max_points(df)
+                            .add_sum = function(df){
+                              max_points <- private$.take_max_points(df)
                               last_col <- 2 + max_points
                               df$sum <- rowSums(df[, c(3:last_col)])
                               df$percentage <- round((df$sum / max_points) * 100, 0)
@@ -49,21 +33,37 @@ ResultsManager <- R6Class("ResultsManager",
                               return(df)
                             },
                             
-                            show_test_results_df = function(){
-                              return(self$test_results_df)
-                            },
-                            
-                            define_range = function(start_row, start_col, end_row, end_col){
+                            .define_range = function(start_row, start_col, end_row, end_col){
                               range <- cell_limits(ul = c(start_row, start_col), lr = c(end_row, end_col))
                               return(range)
                             },
                             
-                            find_test_column_index = function(test_number, df){
+                            .find_test_column_index = function(test_number, df){
                               test_number <- as.character(test_number)
                               list <- colnames(df)
                               index <- sapply(list, function(x) grepl(test_number, x))
                               test_column_index <- as.numeric(which(index))
                               return(test_column_index)
+                            }
+                          ),
+                          
+                          public = list(
+                            test_number = NULL,
+                            test_results_df = NULL,     # public
+                            
+                            initialize = function(config, test_results_df, test_number) {
+                              
+                              stopifnot(is.list(config))
+                              stopifnot(is.data.frame(test_results_df))
+                              stopifnot(is.numeric(test_number))
+                              
+                              self$test_results_df <- private$.add_sum(test_results_df)
+                              self$test_number <- test_number
+                              
+                              private$config <- config
+                              private$all_results_df <- googlesheets4::read_sheet(private$config$Settings$ResultsURL)
+                              private$all_results_gs <- googlesheets4::gs4_get(private$config$Settings$ResultsURL)
+                              private$column_index <- private$.find_test_column_index(self$test_number, private$all_results_df)
                             },
                             
                             update_test_results = function(){
@@ -74,14 +74,14 @@ ResultsManager <- R6Class("ResultsManager",
                                 last_row_index <- nrow(private$all_results_df) + 1
                                 
                                 if(length(student_row_index) > 0) {
-                                  range <- self$define_range(student_row_index, private$column_index, student_row_index, private$column_index)
+                                  range <- private$.define_range(student_row_index, private$column_index, student_row_index, private$column_index)
                                   range_write(private$all_results_gs, data = as.data.frame(student_result), sheet = NULL, range = range, col_names = FALSE, reformat = TRUE)
                                 } else {
                                   # add ID
-                                  range <- self$define_range(last_row_index+1, 1, last_row_index+1, 1)
+                                  range <- private$.define_range(last_row_index+1, 1, last_row_index+1, 1)
                                   range_write(private$all_results_gs, data = as.data.frame(student_id), sheet = NULL, range = range, col_names = FALSE, reformat = TRUE)
                                   # add result
-                                  range <- self$define_range(last_row_index+1, private$column_index, last_row_index+1, private$column_index)
+                                  range <- private$.define_range(last_row_index+1, private$column_index, last_row_index+1, private$column_index)
                                   range_write(
                                     private$all_results_gs,
                                     data = as.data.frame(student_result),
