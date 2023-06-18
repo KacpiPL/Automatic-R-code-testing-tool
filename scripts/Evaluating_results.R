@@ -131,19 +131,21 @@ compare_answers <- function(config, Testnr) {
     
     task_scores <- rep(0, length(task_ids))
     start_time <- Sys.time()
+    
+    
     for (j in 1:2) {
       if (task_scores[j] == 0) {
         expected_answer <- tryCatch({
           eval(parse(text = deparse(task_answers[j])))
         }, error = function(e) {
-          cat("Error occurred while evaluating expected answer for", task_ids[j], ":\n")
+          cat("Error occurred while evaluating student answer for", task_ids[j], ":\n")
           print(e)
         })
         
         applicant_answer <- tryCatch({
           eval(parse(text = deparse(applicant_answers[j])))
         }, error = function(e) {
-          cat("Error occurred while evaluating applicant answer for", task_ids[j], ":\n")
+          cat("Error occurred while evaluating student answer for", task_ids[j], ":\n")
           print(e)
         })
         
@@ -155,34 +157,31 @@ compare_answers <- function(config, Testnr) {
           
           # Perform the test using test_that and catch the error if it fails
           tryCatch({
-            test_that(paste("Applicant", i, "-", task_ids[j]), {
+            test_that(paste("Student", i, "-", task_ids[j]), {
               expect_equal(applicant_answer, expected_answer)
             })
             task_scores[j] <- 1
           }, error = function(e) {
             task_scores[j] <- 0
-            cat("Test failed for Applicant", i, "-", task_ids[j], "\n")
+            cat("Test failed for student", i, "-", task_ids[j], "\n")
           })
         }
       }
     }
-    
-    
-    
     
     for (j in 1:length(task_ids)) {
       if (j >= 3 && task_scores[j] == 0) {
         expected_answer <- tryCatch({
           eval(parse(text = task_answers[j]))
         }, error = function(e) {
-          cat("Error occurred while evaluating expected answer for", task_ids[j], ":\n")
+          cat("Error occurred while evaluating student answer for", task_ids[j], ":\n")
           print(e)
         })
         
         applicant_answer <- tryCatch({
           eval(parse(text = applicant_answers[j]))
         }, error = function(e) {
-          cat("Error occurred while evaluating applicant answer for", task_ids[j], ":\n")
+          cat("Error occurred while evaluating student answer for", task_ids[j], ":\n")
           print(e)
         })
         
@@ -231,7 +230,7 @@ compare_answers <- function(config, Testnr) {
 }
 
 
-test_4_results_df <- compare_answers(config, 4)
+Table3 <- compare_answers(config, 4)
 
 
 
