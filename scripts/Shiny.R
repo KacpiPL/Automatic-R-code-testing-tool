@@ -1,7 +1,6 @@
 # Load required libraries
 library(tidyverse)
 library(shiny)
-rm(list = ls())
 
 # Code for overall UI
 ui <- fluidPage(
