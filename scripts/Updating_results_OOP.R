@@ -81,9 +81,9 @@ ResultsManager <- R6Class("ResultsManager",
                                   range <- self$define_range(last_row_index+1, 1, last_row_index+1, 1)
                                   range_write(private$all_results_gs, data = as.data.frame(student_id), sheet = NULL, range = range, col_names = FALSE, reformat = TRUE)
                                   # add result
-                                  range <- self$define_range(last_row_index+1, column_index, last_row_index+1, column_index)
+                                  range <- self$define_range(last_row_index+1, private$column_index, last_row_index+1, private$column_index)
                                   range_write(
-                                    all_results_gs,
+                                    private$all_results_gs,
                                     data = as.data.frame(student_result),
                                     sheet = NULL,
                                     range = range,
@@ -100,8 +100,11 @@ config <- yaml.load_file("config.yaml")
 
 # Initialize a new ResultsManager
 test4 <- ResultsManager$new(config = config,
-                            test_results_df = test_4_results_df,
+                            test_results_df = test4_df,
                             test_number = 4)
+
+test4$test_results_df
+
 
 test4$update_test_results()
 
@@ -111,30 +114,3 @@ test4$update_test_results()
 
 
 
-
-
-debug(ResultsManager$public_methods$initialize)
-                                  
-
-
-
-TestClass <- R6Class("TestClass",
-                     private = list(
-                       config = NULL
-                     ),
-                     
-                     public = list(
-                       test_public = NULL,
-                       
-                       initialize = function(config) {
-                         self$test_public <- googlesheets4::read_sheet(private$config$Settings$ResultsURL)
-                       }
-                     ))
-
-my_test <- TestClass$new(config)
-
-df <- read_sheet(config$Settings$ResultsURL)
-gs <- gs4_get(config$Settings$ResultsURL)
-
-print(my_test$test_public)
-                                  

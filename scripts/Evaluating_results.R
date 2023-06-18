@@ -7,6 +7,7 @@ library(googlesheets4)
 library(dplyr)
 library(yaml)
 library(testthat)
+library(stringr)
 
 rm(list=ls())
 
@@ -23,7 +24,7 @@ config <- yaml.load_file("config.yaml")
 ## Final, impassable ddl
 
 create_final_ddl <- function(ddlDate, maxHoursDelayed){
-  ddlDate <- as.POSIXct(ddlDate, tz\ = "UTC")
+  ddlDate <- as.POSIXct(ddlDate, tz = "UTC")
   if(maxHoursDelayed == 0){
     ddlDate <- ddlDate + 24*60*60 - 1
   } else{
@@ -210,6 +211,7 @@ compare_answers <- function(config, Testnr) {
   return(results)
 }
 
+test4 <- compare_answers(config, 4)
 
 
 
