@@ -8,6 +8,8 @@ library(dplyr)
 library(yaml)
 library(testthat)
 library(stringr)
+library(tidyverse)
+library(stringr)
 
 rm(list=ls())
 
@@ -208,10 +210,10 @@ compare_answers <- function(config, Testnr) {
   cat("Total score:", total_score, "\n")
   
   # Return the results dataframe
-  return(results)
+  results = return(results)
 }
 
-test4 <- compare_answers(config, 4)
+
 
 
 
