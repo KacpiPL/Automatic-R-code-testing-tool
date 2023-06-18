@@ -64,12 +64,6 @@ Test <- R6Class("Test",
                     private$task_ids <- paste0("Task", seq_along(self$tasks))
                     self$task_answers <- unlist(self$tasks)
                     private$total_score <- 0
-                    
-                    self$results <- data.frame(
-                      Name = character(nrow(self$data)),
-                      Student_ID = character(nrow(self$data)),
-                      stringsAsFactors = FALSE
-                    )
                   },
                   
                   # We can move the logic of compare_answers to this method
@@ -77,6 +71,13 @@ Test <- R6Class("Test",
                     self$ddlDate <- private$.create_final_ddl(self$ddlDate, self$maxHoursDelayed)
                     self$data <- private$.filter_answers(self$data, self$ddlDate)
                     self$data <- private$.filter_data_by_email(self$data, self$students_only)
+                    
+                    # Initialize the dataframe with results after filtering data
+                    self$results <- data.frame(
+                      Name = character(nrow(self$data)),
+                      Student_ID = character(nrow(self$data)),
+                      stringsAsFactors = FALSE
+                    )
                     
                     set.seed(private$seed_value)
                     
