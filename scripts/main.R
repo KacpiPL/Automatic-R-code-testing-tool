@@ -9,6 +9,7 @@ library(stringr)
 
 rm(list=ls())
 
+source("scripts/Shiny.R")
 # We refactored the code from Evaluating_results.R to the Evaluating_results_OOP.R but unfortunately,
 # during the last hours we found out that the function inside the class Test is not working correctly.
 # We do not have any idea why - it should be working.
@@ -32,3 +33,6 @@ test_3_res_mngr$test_results_df
 
 # update results
 test_3_res_mngr$update_test_results()
+
+# Run the Shiny app
+shinyApp(ui = ui, server = server)
