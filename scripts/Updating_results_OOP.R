@@ -104,8 +104,6 @@ test4 <- ResultsManager$new(config = config,
                             test_number = 4)
 
 test4$test_results_df
-
-
 test4$update_test_results()
 
 
