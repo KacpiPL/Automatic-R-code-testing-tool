@@ -27,11 +27,10 @@ server <- function(input, output) {
     eval(parse(text = readLines("scripts/Evaluating_results.R", warn = FALSE)))
     
     test_nr <- input$test_nr
-    #results <- compare_answers(config, test_nr)
+    results <- compare_answers(config, test_nr)
     
-    test_obj <- Test$new(config, test_nr)
-    test_obj$score_test()
-    results <- test_obj$results
+    #test_obj <- Test$new(config, test_nr)
+    #results <- test_obj$results
     
     
     # Calculate TotalScore by summing scores for each task
