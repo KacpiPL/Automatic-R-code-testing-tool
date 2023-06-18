@@ -6,6 +6,14 @@ Test <- R6Class("Test",
                   task_ids = NULL,
                   total_score = NULL,
                   
+                  # create_final_ddl
+                  ## function to create final DDL
+                  # Input:
+                  ## ddlDate <- final deadline date, in the format "2023-04-06"
+                  ## maxHoursDelayed <- the numeric number of hours a student may be late
+                  # Output:
+                  ## Final, impassable ddl
+                  
                   .create_final_ddl = function(ddlDate, maxHoursDelayed){
                     ddlDate <- as.POSIXct(ddlDate, tz = "UTC")
                     if(maxHoursDelayed == 0){
@@ -16,6 +24,15 @@ Test <- R6Class("Test",
                     return(ddlDate)
                   },
                   
+                  # filter_answers
+                  # function to filter answers
+                  ## only the first answer can be checkd
+                  ## answer must be sent before the final DDL - ddlDate
+                  # Input:
+                  ## df <- dataframe to be filtered
+                  ## ddlDate <- final deadline 
+                  # Output:
+                  ## Filtered dafatrame
                   .filter_answers = function(df, ddlDate){
                     df <- df %>%
                       filter(df[[1]] <= ddlDate)
@@ -27,13 +44,20 @@ Test <- R6Class("Test",
                     return(df)
                   },
                   
-                  .filter_data_by_email = function(data, students_only) {
+                  # filter_data_by_email
+                  ## function to filter answers by getting only students' data
+                  # Input:
+                  ## df - dataframe to be filteres
+                  ## students only <- True/False value from config
+                  # Output:
+                  ## filtered dataframe
+                  .filter_data_by_email = function(df, students_only) {
                     if (students_only) {
-                      data <- subset(data, grepl("@student\\.uw\\.edu\\.pl$", `Adres e-mail`))
+                      df <- subset(df, grepl("@student\\.uw\\.edu\\.pl$", `Adres e-mail`))
                     } else {
-                      data <- data
+                      df <- df
                     }
-                    return(data)
+                    return(df)
                   }
                 ),
                 
@@ -50,24 +74,37 @@ Test <- R6Class("Test",
                   
                   initialize = function(config, testnr) {
                     
+                    # Validity checking
+                    stopifnot(is.list(config))
+                    stopifnot(is.numeric(config$Settings$Seed))
+                    stopifnot(is.numeric(config$Settings$Starting_Task_Col))
+                    stopifnot(is.numeric(config$Settings$maxHoursDelayed))
+                    stopifnot(is.logical(config$Settings$Students_only))
+                    stopifnot(is.numeric(testnr))
+                    
+                    # Initialize private variables
                     private$config <- config
+                    private$seed_value <- config$Settings$Seed
+                    private$task_col <- config$Settings$Starting_Task_Col
+                    private$total_score <- 0
+                    
+                    # Initialize public variables
                     self$testnr <- testnr
                     self$maxHoursDelayed <- config$Settings$maxHoursDelayed
                     self$students_only <- config$Settings$Students_only
-                    private$seed_value <- config$Settings$Seed
-                    
-                    private$task_col <- config$Settings$Starting_Task_Col
                     self$data <- read_sheet(config$SheetsURLs[[paste0("sheetURL", self$testnr)]])
                     self$lecture <- config$Lectures[[paste0("Lecture", self$testnr)]]
                     self$ddlDate <- self$lecture$ddlDate
                     self$tasks <- self$lecture[names(self$lecture) != c("Code", "ddlDate")]
-                    private$task_ids <- paste0("Task", seq_along(self$tasks))
+                    
                     self$task_answers <- unlist(self$tasks)
-                    private$total_score <- 0
+                    private$task_ids <- paste0("Task", seq_along(self$tasks))  # needs to be defined after tasks
                   },
                   
-                  # We can move the logic of compare_answers to this method
+                  # Main function, to evaluate answers
                   score_test = function() {
+                    
+                    # Filter data
                     self$ddlDate <- private$.create_final_ddl(self$ddlDate, self$maxHoursDelayed)
                     self$data <- private$.filter_answers(self$data, self$ddlDate)
                     self$data <- private$.filter_data_by_email(self$data, self$students_only)
@@ -179,18 +216,6 @@ Test <- R6Class("Test",
                     
                     # Print the total score
                     cat("Total score:", private$total_score, "\n")
-                    
-                    # Return the results dataframe
-                    #return(results)
                   }
                 ))
-
-one <- Test$new(config, 4)
-
-one$score_test()
-df <- one$results
-one$show_tasks_ids()
-
-
-df1 <- one$data
 
