@@ -72,13 +72,25 @@ ResultsManager <- R6Class("ResultsManager",
                                 student_result <- self$test_results_df[row, ncol(self$test_results_df)]
                                 student_row_index <- which(private$all_results_df$'Student ID' == student_id) + 1
                                 last_row_index <- nrow(private$all_results_df) + 1
+                                
                                 if(length(student_row_index) > 0) {
                                   range <- self$define_range(student_row_index, private$column_index, student_row_index, private$column_index)
                                   range_write(private$all_results_gs, data = as.data.frame(student_result), sheet = NULL, range = range, col_names = FALSE, reformat = TRUE)
                                 } else {
+                                  # add ID
                                   range <- self$define_range(last_row_index+1, 1, last_row_index+1, 1)
                                   range_write(private$all_results_gs, data = as.data.frame(student_id), sheet = NULL, range = range, col_names = FALSE, reformat = TRUE)
-                                  range <- self$define_range(last_row_index+1, private$column_index, last_row_index+1, private$column_index)
+                                  # add result
+                                  range <- self$define_range(last_row_index+1, column_index, last_row_index+1, column_index)
+                                  range_write(
+                                    all_results_gs,
+                                    data = as.data.frame(student_result),
+                                    sheet = NULL,
+                                    range = range,
+                                    col_names = FALSE,
+                                    reformat = TRUE
+                                  )
+                                  private$all_results_df <- googlesheets4::read_sheet(private$config$Settings$ResultsURL)
                                 }
                               }
                             }))
@@ -91,8 +103,7 @@ test4 <- ResultsManager$new(config = config,
                             test_results_df = test_4_results_df,
                             test_number = 4)
 
-ResultsManager$show_test_results_df
-
+test4$update_test_results()
 
 
 
