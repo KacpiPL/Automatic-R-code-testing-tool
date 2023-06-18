@@ -57,11 +57,11 @@ Test <- R6Class("Test",
                     private$seed_value <- config$Settings$Seed
                     
                     private$task_col <- config$Settings$Starting_Task_Col
-                    self$data <- read_sheet(config$SheetsURLs[[paste0("sheetURL", testnr)]])
-                    private$task_ids <- paste0("Task", seq_along(self$tasks))
+                    self$data <- read_sheet(config$SheetsURLs[[paste0("sheetURL", self$testnr)]])
                     self$lecture <- config$Lectures[[paste0("Lecture", self$testnr)]]
                     self$ddlDate <- self$lecture$ddlDate
                     self$tasks <- self$lecture[names(self$lecture) != c("Code", "ddlDate")]
+                    private$task_ids <- paste0("Task", seq_along(self$tasks))
                     self$task_answers <- unlist(self$tasks)
                     private$total_score <- 0
                     
@@ -185,6 +185,7 @@ Test <- R6Class("Test",
                 ))
 
 one <- Test$new(config, 4)
+
 one$score_test()
 df <- one$results
 one$show_tasks_ids()
