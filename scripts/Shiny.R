@@ -20,7 +20,6 @@ ui <- fluidPage(
     )
   )
 )
-
 # Code for Server
 server <- function(input, output) {
   # Function to run the comparison and generate plots
