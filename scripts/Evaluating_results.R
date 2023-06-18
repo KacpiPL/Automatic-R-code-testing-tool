@@ -221,5 +221,3 @@ compare_answers <- function(config, Testnr) {
 
 
 
-
-
