@@ -1,0 +1,9 @@
+SheetsURLs - key for urls to the test form
+    sheetURL1 - link to the first test
+    sheetULR2 - link to the second test
+    etc.
+Settings - key for ovarall settings
+    ddlDate - test deadline, required format: yyyy-mm-ddlDate, it will take 23:59:59 as default
+    maxHoursDelayed - the numeric number of hours a student may be late
+Lectures: - specific data for specific lectures   
+  Code: - Code that has to be run before evaluating functions in order for them to work.
