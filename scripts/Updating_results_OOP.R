@@ -95,17 +95,6 @@ ResultsManager <- R6Class("ResultsManager",
                               }
                             }))
 
-# run the code
-config <- yaml.load_file("config.yaml")
-
-# Initialize a new ResultsManager
-test4 <- ResultsManager$new(config = config,
-                            test_results_df = test4_df,
-                            test_number = 4)
-
-test4$test_results_df
-test4$update_test_results()
-
 
 
 
